@@ -1,5 +1,18 @@
 class FastBillAutomatic
   @_ApiUrl = 'https://automatic.fastbill.com/api/1.0/api.php'
+  @_notifications = [
+    'customer.created',
+    'customer.changed',
+    'customer.deleted',
+    'subscription.created',
+    'subscription.changed',
+    'subscription.canceled',
+    'subscription.closed',
+    'payment.created',
+    'payment.failed',
+    'payment.chargeback',
+    'payment.refunded',
+  ]
   _apiCall: (service, data) ->
     request = new FBARequest service, data
     response = @_HTTP.post FastBillAutomatic._ApiUrl,
@@ -17,7 +30,23 @@ class FastBillAutomatic
 
 
   # public methods
+  _events: {}
   constructor: (@ApiMail, @ApiKey, @_HTTP = HTTP) ->
+  registerNotifications: (url) ->
+    check url, String
+    method = {}
+    method[url] = post: (data) =>
+      throw new Error "Unknown notification type '#{notification}'!" unless data.type in FastBillAutomatic._notifications
+      @_trigger data.type, _.omit data, 'type'
+    HTTP.methods method
+  _trigger: (notification, data) ->
+    throw new Error "Unknown notification type '#{notification}'!" unless notification in FastBillAutomatic._notifications
+    callback data for callback in @_events[notification]
+  on: (notification, callback) ->
+    throw new Error "Unknown notification type '#{notification}'!" unless notification in FastBillAutomatic._notifications
+    @_events[notification] = [] unless @_events[notification]?
+    @_events[notification].push callback
+
 
   'customer.get': (data = {}) ->
     @_makeRequest 'customer.get', 'CUSTOMERS', data, FBAPatterns.customer.get()

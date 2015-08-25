@@ -1,7 +1,7 @@
 Package.describe({
   name: 'team:fastbill-automatic',
   summary: 'Meteor implementation of the FastBill-Automatic API',
-  version: '0.1.0'
+  version: '0.2.0'
 });
 
 Package.onUse(function(api) {
@@ -10,6 +10,7 @@ Package.onUse(function(api) {
     'coffeescript',
     'underscore',
     'http',
+    'cfs:http-methods@0.0.29',
   ]);
   api.addFiles([
     'patterns.coffee',
