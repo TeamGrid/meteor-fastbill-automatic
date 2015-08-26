@@ -1,7 +1,8 @@
 Package.describe({
   name: 'team:fastbill-automatic',
   summary: 'Meteor implementation of the FastBill-Automatic API',
-  version: '0.2.0'
+  version: '0.2.0',
+  git: 'https://github.com/TeamGrid/meteor-fastbill-automatic'
 });
 
 Package.onUse(function(api) {
