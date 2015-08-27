@@ -13,17 +13,20 @@ class FastBillAutomatic
     'payment.chargeback',
     'payment.refunded',
   ]
-  _apiCall: (service, data) ->
-    request = new FBARequest service, data
+  _apiCall: (service, data, filter) ->
+    request = new FBARequest service, data, filter
     response = @_HTTP.post FastBillAutomatic._ApiUrl,
       data: request.getContent()
       auth: "#{@ApiMail}:#{@ApiKey}"
       headers:
         'Content-Type': 'application/json; charset=utf-8'
     return new FBAResponse response
-  _makeRequest: (service, responseKey, data, dataFormat) ->
-    check data, dataFormat
-    response = @_apiCall service, data
+  _makeRequest: (service, responseKey, data, filter, dataFormat) ->
+    if data?
+      check data, dataFormat
+    else
+      check filter, dataFormat
+    response = @_apiCall service, data, filter
     throw new Error response.getErrors() if response.hasErrors()
     return response.data[responseKey] if responseKey?
     return response.data
@@ -48,88 +51,88 @@ class FastBillAutomatic
     @_events[notification].push callback
 
 
-  'customer.get': (data = {}) ->
-    @_makeRequest 'customer.get', 'CUSTOMERS', data, FBAPatterns.customer.get()
+  'customer.get': (filter = {}) ->
+    @_makeRequest 'customer.get', 'CUSTOMERS', null, filter, FBAPatterns.customer.get()
   'customer.create': (data) ->
-    @_makeRequest 'customer.create', null, data, FBAPatterns.customer.create()
+    @_makeRequest 'customer.create', null, data, null, FBAPatterns.customer.create()
   'customer.update': (data) ->
-    @_makeRequest 'customer.update', null, data, FBAPatterns.customer.update()
+    @_makeRequest 'customer.update', null, data, null, FBAPatterns.customer.update()
   'customer.delete': (data) ->
-    @_makeRequest 'customer.delete', 'STATUS', data, FBAPatterns.customer.delete()
+    @_makeRequest 'customer.delete', 'STATUS', data, null, FBAPatterns.customer.delete()
   'customer.addcredits': (data) ->
-    @_makeRequest 'customer.addcredits', 'STATUS', data, FBAPatterns.customer.addcredits()
+    @_makeRequest 'customer.addcredits', 'STATUS', data, null, FBAPatterns.customer.addcredits()
   'customer.createsecurelink': (data) ->
-    @_makeRequest 'customer.createsecurelink', null, data, FBAPatterns.customer.createsecurelink()
+    @_makeRequest 'customer.createsecurelink', null, data, null, FBAPatterns.customer.createsecurelink()
 
-  'subscription.get': (data = {}) ->
-    @_makeRequest 'subscription.get', null, data, FBAPatterns.subscription.get()
+  'subscription.get': (filter = {}) ->
+    @_makeRequest 'subscription.get', 'SUBSCRIPTIONS', null, filter, FBAPatterns.subscription.get()
   'subscription.create': (data) ->
-    @_makeRequest 'subscription.create', null, data, FBAPatterns.subscription.create()
+    @_makeRequest 'subscription.create', null, data, null, FBAPatterns.subscription.create()
   'subscription.update': (data) ->
-    @_makeRequest 'subscription.update', 'STATUS', data, FBAPatterns.subscription.update()
+    @_makeRequest 'subscription.update', 'STATUS', data, null, FBAPatterns.subscription.update()
   'subscription.changearticle': (data) ->
-    @_makeRequest 'subscription.changearticle', null, data, FBAPatterns.subscription.changearticle()
+    @_makeRequest 'subscription.changearticle', null, data, null, FBAPatterns.subscription.changearticle()
   'subscription.setaddon': (data) ->
-    @_makeRequest 'subscription.setaddon', 'STATUS', data, FBAPatterns.subscription.setaddon()
+    @_makeRequest 'subscription.setaddon', 'STATUS', data, null, FBAPatterns.subscription.setaddon()
   'subscription.setusagedata': (data) ->
-    @_makeRequest 'subscription.setusagedata', null, data, FBAPatterns.subscription.setusagedata()
+    @_makeRequest 'subscription.setusagedata', null, data, null, FBAPatterns.subscription.setusagedata()
   'subscription.getusagedata': (data) ->
-    @_makeRequest 'subscription.getusagedata', null, data, FBAPatterns.subscription.getusagedata()
+    @_makeRequest 'subscription.getusagedata', null, data, null, FBAPatterns.subscription.getusagedata()
   'subscription.deleteusagedata': (data) ->
-    @_makeRequest 'subscription.deleteusagedata', 'STATUS', data, FBAPatterns.subscription.deleteusagedata()
+    @_makeRequest 'subscription.deleteusagedata', 'STATUS', data, null, FBAPatterns.subscription.deleteusagedata()
   'subscription.reactivate': (data) ->
-    @_makeRequest 'subscription.reactivate', 'STATUS', data, FBAPatterns.subscription.reactivate()
+    @_makeRequest 'subscription.reactivate', 'STATUS', data, null, FBAPatterns.subscription.reactivate()
   'subscription.cancel': (data) ->
-    @_makeRequest 'subscription.cancel', null, data, FBAPatterns.subscription.cancel()
+    @_makeRequest 'subscription.cancel', null, data, null, FBAPatterns.subscription.cancel()
   'subscription.getupcomingamount': (data) ->
-    @_makeRequest 'subscription.getupcomingamount', 'TOTAL', data, FBAPatterns.subscription.getupcomingamount()
+    @_makeRequest 'subscription.getupcomingamount', 'TOTAL', data, null, FBAPatterns.subscription.getupcomingamount()
   'subscription.postpone': (data) ->
-    @_makeRequest 'subscription.postpone', 'STATUS', data, FBAPatterns.subscription.postpone()
+    @_makeRequest 'subscription.postpone', 'STATUS', data, null, FBAPatterns.subscription.postpone()
   'subscription.renew': (data) ->
-    @_makeRequest 'subscription.renew', 'STATUS', data, FBAPatterns.subscription.renew()
+    @_makeRequest 'subscription.renew', 'STATUS', data, null, FBAPatterns.subscription.renew()
   'subscription.createsecurelink': (data) ->
-    @_makeRequest 'subscription.createsecurelink', null, data, FBAPatterns.subscription.createsecurelink()
+    @_makeRequest 'subscription.createsecurelink', null, data, null, FBAPatterns.subscription.createsecurelink()
 
-  'invoice.get': (data = {}) ->
-    @_makeRequest 'invoice.get', null, data, FBAPatterns.invoice.get()
+  'invoice.get': (filter = {}) ->
+    @_makeRequest 'invoice.get', 'INVOICES', null, filter, FBAPatterns.invoice.get()
   'invoice.create': (data) ->
-    @_makeRequest 'invoice.create', null, data, FBAPatterns.invoice.create()
+    @_makeRequest 'invoice.create', null, data, null, FBAPatterns.invoice.create()
   'invoice.update': (data) ->
-    @_makeRequest 'invoice.update', 'STATUS', data, FBAPatterns.invoice.update()
+    @_makeRequest 'invoice.update', 'STATUS', data, null, FBAPatterns.invoice.update()
   'invoice.delete': (data) ->
-    @_makeRequest 'invoice.delete', 'STATUS', data, FBAPatterns.invoice.delete()
+    @_makeRequest 'invoice.delete', 'STATUS', data, null, FBAPatterns.invoice.delete()
   'invoice.complete': (data) ->
-    @_makeRequest 'invoice.complete', null, data, FBAPatterns.invoice.complete()
+    @_makeRequest 'invoice.complete', null, data, null, FBAPatterns.invoice.complete()
   'invoice.cancel': (data) ->
-    @_makeRequest 'invoice.cancel', null, data, FBAPatterns.invoice.cancel()
+    @_makeRequest 'invoice.cancel', null, data, null, FBAPatterns.invoice.cancel()
   'invoice.sign': (data) ->
-    @_makeRequest 'invoice.sign', null, data, FBAPatterns.invoice.sign()
+    @_makeRequest 'invoice.sign', null, data, null, FBAPatterns.invoice.sign()
   'invoice.sendbypost': (data) ->
-    @_makeRequest 'invoice.sendbypost', null, data, FBAPatterns.invoice.sendbypost()
+    @_makeRequest 'invoice.sendbypost', null, data, null, FBAPatterns.invoice.sendbypost()
   'invoice.setpaid': (data) ->
-    @_makeRequest 'invoice.setpaid', null, data, FBAPatterns.invoice.setpaid()
+    @_makeRequest 'invoice.setpaid', null, data, null, FBAPatterns.invoice.setpaid()
   'invoice.getreminders': (data) ->
-    @_makeRequest 'invoice.getreminders', null, data, FBAPatterns.invoice.getreminders()
+    @_makeRequest 'invoice.getreminders', null, data, null, FBAPatterns.invoice.getreminders()
 
   'item.get': (data) ->
-    @_makeRequest 'item.get', null, data, FBAPatterns.item.get()
+    @_makeRequest 'item.get', null, data, null, FBAPatterns.item.get()
   'item.delete': (data) ->
-    @_makeRequest 'item.delete', 'STATUS', data, FBAPatterns.item.delete()
+    @_makeRequest 'item.delete', 'STATUS', data, null, FBAPatterns.item.delete()
 
   'article.get': (data = {}) ->
-    @_makeRequest 'article.get', 'ARTICLES', data, FBAPatterns.article.get()
+    @_makeRequest 'article.get', 'ARTICLES', data, null, FBAPatterns.article.get()
 
   'shipment.get': (data = {}) ->
-    @_makeRequest 'shipment.get', null, data, FBAPatterns.shipment.get()
+    @_makeRequest 'shipment.get', null, data, null, FBAPatterns.shipment.get()
   'shipment.update': (data) ->
-    @_makeRequest 'shipment.update', null, data, FBAPatterns.shipment.update()
+    @_makeRequest 'shipment.update', null, data, null, FBAPatterns.shipment.update()
   'shipment.delete': (data) ->
-    @_makeRequest 'shipment.delete', null, data, FBAPatterns.shipment.delete()
+    @_makeRequest 'shipment.delete', null, data, null, FBAPatterns.shipment.delete()
 
-  'coupon.get': (data) ->
-    @_makeRequest 'coupon.get', null, data, FBAPatterns.coupon.get()
+  'coupon.get': (filter = {}) ->
+    @_makeRequest 'coupon.get', null, null, filter, FBAPatterns.coupon.get()
   'coupon.check': (data) ->
-    @_makeRequest 'coupon.check', null, data, FBAPatterns.coupon.check()
+    @_makeRequest 'coupon.check', null, data, null, FBAPatterns.coupon.check()
 
   'template.get': ->
     @_makeRequest 'template.get', null, null, FBAPatterns.template.get()

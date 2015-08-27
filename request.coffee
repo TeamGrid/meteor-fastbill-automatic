@@ -1,7 +1,11 @@
 class @FBARequest
-  constructor: (@service, @data) ->
+  constructor: (@service, @data, @filter) ->
+    check @service, String
   getContent: ->
-    SERVICE: @service
-    DATA: @data
+    content = {}
+    content.SERVICE = @service
+    content.DATA = @data if @data?
+    content.FILTER = @filter if @filter?
+    return content
   getJson: ->
     EJSON.stringify @getContent()
