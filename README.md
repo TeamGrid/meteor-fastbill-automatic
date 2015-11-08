@@ -1,10 +1,10 @@
-# team:fastbill-automatic
+# teamgrid:fastbill-automatic
 Meteor implementation of the FastBill-Automatic API
 
 ## Installation
 
 ```
-    meteor add team:fastbill-automatic
+    meteor add teamgrid:fastbill-automatic
 ```
 
 ## Usage
